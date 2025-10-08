@@ -1,0 +1,30 @@
+{
+  "name": "personal-organizer-pro",
+  "version": "2.0.0",
+  "description": "Smart, automated personal finance manager - Mobile first PWA",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve",
+    "dev": "npx serve -l 8000",
+    "generate-icons": "python generate-icons.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/personal-organizer-pro.git"
+  },
+  "keywords": [
+    "pwa",
+    "finance",
+    "budget",
+    "expense-tracker",
+    "todo",
+    "shopping-list",
+    "productivity"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/personal-organizer-pro/issues"
+  },
+  "homepage": "https://github.com/yourusername/personal-organizer-pro#readme"
+}
