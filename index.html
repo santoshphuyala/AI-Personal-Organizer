@@ -1,0 +1,371 @@
+
+## Developer:Santosh Phuyal
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Smart, automated personal finance manager - Mobile first PWA">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Organizer Pro">
+    
+    <title>Personal Organizer Pro</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <!-- Install Banner -->
+    <div id="installBanner" class="install-banner hidden">
+        <div class="install-content">
+            <span>📱 Install app for better experience!</span>
+            <div>
+                <button id="installBtn" class="btn-install">Install</button>
+                <button id="dismissInstall" class="btn-dismiss">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Header with search -->
+        <header class="app-header">
+            <div class="header-top">
+                <h1 class="app-title">💼 Organizer Pro</h1>
+                <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+            
+            <!-- Quick Stats Bar -->
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Balance</span>
+                    <span class="stat-value" id="quickBalance">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Budget</span>
+                    <span class="stat-value" id="quickBudget">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Tasks</span>
+                    <span class="stat-value" id="quickTasks">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="mainContent">
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <h2 class="section-title">Quick Add</h2>
+                    <div class="quick-grid" id="quickExpenses">
+                        <!-- Generated dynamically -->
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section class="recent-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <button class="btn-text" onclick="switchTab('expenses')">View All</button>
+                    </div>
+                    <div id="recentActivity"></div>
+                </section>
+
+                <!-- Upcoming Tasks -->
+                <section class="tasks-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Today's Tasks</h2>
+                        <button class="btn-text" onclick="switchTab('todo')">View All</button>
+                    </div>
+                    <div id="todayTasks"></div>
+                </section>
+
+                <!-- Shopping Summary -->
+                <section class="shopping-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Shopping List</h2>
+                        <button class="btn-text" onclick="switchTab('shopping')">View All</button>
+                    </div>
+                    <div id="shoppingSummary"></div>
+                </section>
+
+            </div>
+
+            <!-- Expenses Tab -->
+            <div id="expenses" class="tab-content">
+                
+                <!-- Month Selector -->
+                <div class="month-selector">
+                    <button class="icon-btn" onclick="changeMonth(-1)">◀</button>
+                    <span id="currentMonth" class="month-label"></span>
+                    <button class="icon-btn" onclick="changeMonth(1)">▶</button>
+                </div>
+
+                <!-- Expense Stats -->
+                <div class="expense-stats">
+                    <div class="stat-card income-card">
+                        <div class="stat-icon">💰</div>
+                        <div>
+                            <div class="stat-label">Income</div>
+                            <div class="stat-amount" id="monthIncome">$0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card expense-card">
+                        <div class="stat-icon">💸</div>
+                        <div>
+                            <div class="stat-label">Expenses</div>
+                            <div class="stat-amount" id="monthExpense">$0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-chips" id="categoryFilters"></div>
+
+                <!-- Transactions List -->
+                <div class="transactions-list" id="transactionsList"></div>
+
+            </div>
+
+            <!-- To-Do Tab -->
+            <div id="todo" class="tab-content">
+                
+                <div class="section-header">
+                    <h2 class="section-title">Tasks</h2>
+                    <div class="btn-group">
+                        <button class="btn-chip active" data-filter="all" onclick="filterTodos('all')">All</button>
+                        <button class="btn-chip" data-filter="pending" onclick="filterTodos('pending')">Pending</button>
+                        <button class="btn-chip" data-filter="completed" onclick="filterTodos('completed')">Done</button>
+                    </div>
+                </div>
+
+                <div class="tasks-list" id="tasksList"></div>
+
+            </div>
+
+            <!-- Shopping Tab -->
+            <div id="shopping" class="tab-content">
+                
+                <div class="shopping-header">
+                    <div class="shopping-stats">
+                        <div class="stat-pill">
+                            <span id="totalItems">0</span> items
+                        </div>
+                        <div class="stat-pill">
+                            <span id="totalCost">$0</span> estimated
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shopping-list" id="shoppingList"></div>
+
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                
+                <div class="chart-card">
+                    <h3 class="chart-title">Spending by Category</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Monthly Trend</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+
+                <div class="insights-section">
+                    <h3 class="section-title">Insights</h3>
+                    <div id="insightsList"></div>
+                </div>
+
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                
+                <div class="settings-group">
+                    <h3 class="settings-title">Preferences</h3>
+                    
+                    <div class="setting-item">
+                        <label for="currencySelect">Currency</label>
+                        <select id="currencySelect" class="select-input">
+                            <option value="USD">🇺🇸 USD ($)</option>
+                            <option value="EUR">🇪🇺 EUR (€)</option>
+                            <option value="GBP">🇬🇧 GBP (£)</option>
+                            <option value="INR">🇮🇳 INR (₹)</option>
+                            <option value="NPR">🇳🇵 NPR (रू)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="monthlyBudget">Monthly Budget</label>
+                        <input type="number" id="monthlyBudget" class="input-field" placeholder="0.00">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="toggle-group">
+                            <label>Enable Notifications</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notificationsToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="toggle-group">
+                            <label>Voice Input</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="voiceToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="toggle-group">
+                            <label>Auto-categorize</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoCategToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3 class="settings-title">Quick Expenses</h3>
+                    <p class="settings-desc">Customize your quick-add buttons</p>
+                    <div id="quickExpenseSettings"></div>
+                    <button class="btn-secondary" onclick="openQuickExpenseModal()">
+                        ➕ Add Quick Expense
+                    </button>
+                </div>
+
+                <div class="settings-group">
+                    <h3 class="settings-title">Data</h3>
+                    
+                    <button class="btn-primary" onclick="exportAllData()">
+                        📥 Export All Data
+                    </button>
+                    
+                    <button class="btn-secondary" onclick="document.getElementById('importFile').click()">
+                        📤 Import Data
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                    
+                    <button class="btn-danger" onclick="clearAllData()">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+
+                <div class="settings-group">
+                    <h3 class="settings-title">About</h3>
+                    <p>Version: 2.0.0</p>
+                    <p>Made with ❤️ for smarter finance</p>
+                    <a href="https://github.com/yourusername/personal-organizer-pro" target="_blank" class="btn-text">
+                        ⭐ Star on GitHub
+                    </a>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-tab="expenses" onclick="switchTab('expenses')">
+                <span class="nav-icon">💰</span>
+                <span class="nav-label">Expenses</span>
+            </button>
+            <button class="nav-item" data-tab="shopping" onclick="switchTab('shopping')">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shopping</span>
+            </button>
+            <button class="nav-item" data-tab="todo" onclick="switchTab('todo')">
+                <span class="nav-icon">✅</span>
+                <span class="nav-label">Tasks</span>
+            </button>
+            <button class="nav-item" data-tab="analytics" onclick="switchTab('analytics')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Stats</span>
+            </button>
+            <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container" id="fabContainer">
+        <button class="fab" id="mainFab" onclick="toggleFabMenu()">
+            <span class="fab-icon">+</span>
+        </button>
+        
+        <div class="fab-menu" id="fabMenu">
+            <button class="fab-option" onclick="quickAddExpense()" data-tooltip="Add Expense">
+                <span>💸</span>
+            </button>
+            <button class="fab-option" onclick="quickAddIncome()" data-tooltip="Add Income">
+                <span>💰</span>
+            </button>
+            <button class="fab-option" onclick="quickAddTask()" data-tooltip="Add Task">
+                <span>✅</span>
+            </button>
+            <button class="fab-option" onclick="quickAddShopping()" data-tooltip="Shopping Item">
+                <span>🛒</span>
+            </button>
+            <button class="fab-option" onclick="startVoiceInput()" data-tooltip="Voice Input">
+                <span>🎤</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Voice Input Indicator -->
+    <div id="voiceIndicator" class="voice-indicator hidden">
+        <div class="voice-pulse"></div>
+        <p>Listening...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
+    <script src="js/utils.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/automation.js"></script>
+    <script src="js/voice.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
